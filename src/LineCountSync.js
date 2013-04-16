@@ -1,8 +1,7 @@
 "use strict";
 
-function LineCountSync (){
-    var fs = require("fs"),
-        totalNumberOfFiles = 0,
+function LineCountSync (directoryReader, fileReader){
+    var totalNumberOfFiles = 0,
         totalNumberOfLines = 0,
         excludeList = ['.git', 'node_modules', '.idea', 'lib'],
         fileTypes = [{ext:'.js', count:0, lines:0},
@@ -12,27 +11,22 @@ function LineCountSync (){
 
     this.getStats = function(){
       return {"totalNumberOfFiles":totalNumberOfFiles,
-              "totalNumberOfLines":totalNumberOfLines};
+              "totalNumberOfLines":totalNumberOfLines,
+              "fileTypes":fileTypes};
     };
 
     this.readDirectoryContents = function(dir){
-        //console.log("dir - " + dir);
-        var files = fs.readdirSync(dir);
+        var files = directoryReader.readDirectoryContents(dir);
         files.forEach(function(file){
-            //console.log("file - " + file);
             var fileExtensionMatch = file.match(/\.\w+$/);
             var fileExtension = ".";
             if(fileExtensionMatch)
             {
                 fileExtension = fileExtensionMatch[0];
             }
-            //console.log(fileExtension);
             if(excludeList.indexOf(file)<0){
                 file = dir + '\\' + file
-                var stat = fs.statSync(file);
-    //                console.log('isDir - ' + stat.isDirectory());
-    //                console.log('file - ' + file);
-    //                console.log('stat - ' + stat);
+                var stat = fileReader.statSync(file);
                 if(stat.isDirectory()){
                     self.readDirectoryContents(file);
                 }else{
@@ -59,9 +53,8 @@ function LineCountSync (){
     };
 
     var countLinesSync = function(file){
-        var contents = fs.readFileSync(file, 'utf8');
+        var contents = fileReader.readFileSync(file, 'utf8');
         var matches = contents.match(/.*\S+.*/g);
-        console.log(file + " - " + matches.length);
         totalNumberOfLines += matches.length;
         return matches.length;
     };

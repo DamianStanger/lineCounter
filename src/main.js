@@ -1,12 +1,16 @@
 "use strict";
 
-var lineCountSync = require('../src/LineCountSync').LineCountSync();
+var LineCountSync = require('../src/LineCountSync'),
+  directoryReader = require('../src/DirectoryReader'),
+  fs = require("fs"),
+  counter;
+
+counter = new LineCountSync(directoryReader, fs);
 
 
+counter.readDirectoryContents('.');
+console.log(counter.getStats().totalNumberOfFiles + " " + counter.getStats().totalNumberOfLines);
 
-lineCountSync.readDirectoryContents('.');
-console.log(lineCountSync.totalNumberOfFiles + " " + lineCountSync.totalNumberOfLines);
-
-lineCountSync.fileTypes.forEach(function(filetype){
+counter.getStats().fileTypes.forEach(function(filetype){
   console.log(filetype.ext + " " + filetype.count + " " + filetype.lines);
 });

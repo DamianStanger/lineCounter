@@ -1,19 +1,65 @@
 'use strict';
 
 var assert = require("assert"),
-  LineCountSync = require("../src/LineCountSync");
+  LineCountSync = require("../src/LineCountSync"),
+  should = require("should"),
+  directoryReader,
+  fileReader,
+  fileContents = "line1\nline2\n\nline3\n";
 
 describe('lineCountSync', function(){
   var lineCounter;
 
   beforeEach(function(){
-    lineCounter = new LineCountSync();
   });
 
 
-  it('should count lines', function() {
-    lineCounter.readDirectoryContents('test/testFiles/');
-    assert.equal(lineCounter.getStats().totalNumberOfFiles, 1);
-    assert.equal(lineCounter.getStats().totalNumberOfLines, 3);
+  it('should count lines and populate global stats', function() {
+    directoryReader = {"readDirectoryContents":function(){return ["foo.js", "bar.js"];}};
+    fileReader = {"statSync":function(){
+      return {"isDirectory":function(){return false;}};},
+      "readFileSync":function(){return fileContents;}
+    };
+
+    lineCounter = new LineCountSync(directoryReader, fileReader);
+    lineCounter.readDirectoryContents('my fake directory');
+
+    lineCounter.getStats().totalNumberOfFiles.should.equal(2);
+    lineCounter.getStats().totalNumberOfLines.should.equal(6);
   });
+
+  it('should count lines and populate stats on js files', function() {
+    directoryReader = {"readDirectoryContents":function(){return ["foo.csv", "doh.txt", "bar.js", "doh.h"];}};
+    fileReader = {"statSync":function(){
+      return {"isDirectory":function(){return false;}};},
+      "readFileSync":function(){return fileContents;}
+    };
+
+    lineCounter = new LineCountSync(directoryReader, fileReader);
+    lineCounter.readDirectoryContents('my fake directory');
+
+    lineCounter.getStats().totalNumberOfFiles.should.equal(1);
+    lineCounter.getStats().totalNumberOfLines.should.equal(3);
+    lineCounter.getStats().fileTypes.should.eql([{ext:'.js', count:1, lines:3},
+                                                 {ext:'.css', count:0, lines:0},
+                                                 {ext:'.java', count:0, lines:0}]);
+  });
+
+  it('should count lines and populate stats on java files', function() {
+    directoryReader = {"readDirectoryContents":function(){return ["foo.java", "doh.txt", "bar.java", "doh.h"];}};
+    fileReader = {"statSync":function(){
+      return {"isDirectory":function(){return false;}};},
+      "readFileSync":function(){return fileContents;}
+    };
+
+    lineCounter = new LineCountSync(directoryReader, fileReader);
+    lineCounter.readDirectoryContents('my fake directory');
+
+    lineCounter.getStats().totalNumberOfFiles.should.equal(2);
+    lineCounter.getStats().totalNumberOfLines.should.equal(6);
+    lineCounter.getStats().fileTypes.should.eql([{ext:'.js', count:0, lines:0},
+      {ext:'.css', count:0, lines:0},
+      {ext:'.java', count:2, lines:6}]);
+  });
+
 });
