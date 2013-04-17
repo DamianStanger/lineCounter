@@ -1,13 +1,21 @@
 "use strict";
 
-function LineCountSync (directoryReader, fileReader){
+function LineCountSync (directoryReader, fileReader, fileTypeArray){
     var totalNumberOfFiles = 0,
         totalNumberOfLines = 0,
         excludeList = ['.git', 'node_modules', '.idea', 'lib'],
-        fileTypes = [{ext:'.js', count:0, lines:0},
-            {ext:'.css', count:0, lines:0},
-            {ext:'.java', count:0, lines:0}],
+        fileTypes = [],
         self = this;
+
+    if(!fileTypeArray || fileTypeArray.length < 1){
+      fileTypes = [{ext:'.js', count:0, lines:0},
+          {ext:'.css', count:0, lines:0},
+          {ext:'.java', count:0, lines:0}];
+    }else{
+      fileTypeArray.forEach(function(fileType){
+        fileTypes.push({ext:fileType, count:0, lines:0});
+      });
+    }
 
     this.getStats = function(){
       return {"totalNumberOfFiles":totalNumberOfFiles,
