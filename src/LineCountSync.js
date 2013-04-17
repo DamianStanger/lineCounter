@@ -8,6 +8,7 @@ function LineCountSync (directoryReader, fileReader, fileTypeArray){
         self = this;
 
     if(!fileTypeArray || fileTypeArray.length < 1){
+      console.log("no file type arguments exist, defaulting to node main.js .js .css .java");
       fileTypes = [{ext:'.js', count:0, lines:0},
           {ext:'.css', count:0, lines:0},
           {ext:'.java', count:0, lines:0}];
@@ -51,22 +52,25 @@ function LineCountSync (directoryReader, fileReader, fileTypeArray){
 
     var getFileType = function(fileExtension)
     {
-        var returnVal;
-        fileTypes.forEach(function(filetype){
-            if(fileExtension === filetype.ext){
-                returnVal = filetype;
-            }
-        });
-        return returnVal;
+      var returnVal;
+      fileTypes.forEach(function(filetype){
+          if(fileExtension === filetype.ext){
+              returnVal = filetype;
+          }
+      });
+      return returnVal;
     };
 
     var countLinesSync = function(file){
-        var contents = fileReader.readFileSync(file, 'utf8');
-        var matches = contents.match(/.*\S+.*/g);
+      var contents = fileReader.readFileSync(file, 'utf8');
+      var matches = contents.match(/.*\S+.*/g);
+      if (matches) {
         totalNumberOfLines += matches.length;
         return matches.length;
+      }
+      return 0;
     };
 
-};
+}
 
 module.exports = LineCountSync;

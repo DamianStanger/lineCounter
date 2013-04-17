@@ -1,4 +1,5 @@
 "use strict";
+
 var reader = require("../src/directoryReader.js"),
     should = require("should");
 

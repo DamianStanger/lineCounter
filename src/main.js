@@ -2,10 +2,14 @@
 
 var LineCountSync = require('../src/LineCountSync'),
   directoryReader = require('../src/DirectoryReader'),
+  argumentParser = require('../src/argumentParser'),
   fs = require("fs"),
-  counter;
+  counter,
+  fileTypes;
 
-counter = new LineCountSync(directoryReader, fs);
+fileTypes = argumentParser.parse(process.argv);
+
+counter = new LineCountSync(directoryReader, fs, fileTypes);
 
 
 counter.readDirectoryContents('.');

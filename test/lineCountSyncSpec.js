@@ -3,7 +3,8 @@
 var assert = require("assert"),
   LineCountSync = require("../src/LineCountSync"),
   should = require("should"),
-  fileContents = "line1\nline2\n\nline3\n";
+  fileContents = "line1\nline2\n\nline3\n",
+  emptyFileContents = "";
 
 describe('lineCountSync', function(){
   var lineCounter;
@@ -58,6 +59,24 @@ describe('lineCountSync', function(){
     lineCounter.getStats().fileTypes.should.eql([{ext:'.js', count:0, lines:0},
       {ext:'.css', count:0, lines:0},
       {ext:'.java', count:2, lines:6}]);
+  });
+
+  it('should count empty files but not the line count', function() {
+    var directoryReader = {"readDirectoryContents":function(){return ["foo.js"];}},
+      fileReader = {"statSync":function(){
+        return {"isDirectory":function(){return false;}};},
+        "readFileSync":function(){return emptyFileContents;}
+      };
+
+    lineCounter = new LineCountSync(directoryReader, fileReader);
+    lineCounter.readDirectoryContents('my fake directory');
+
+    lineCounter.getStats().totalNumberOfFiles.should.equal(1);
+    lineCounter.getStats().totalNumberOfLines.should.equal(0);
+
+    lineCounter.getStats().fileTypes.should.eql([{ext:'.js', count:1, lines:0},
+      {ext:'.css', count:0, lines:0},
+      {ext:'.java', count:0, lines:0}]);
   });
 
   describe('user defined file types', function(){
