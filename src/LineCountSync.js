@@ -34,7 +34,7 @@ function LineCountSync (directoryReader, fileReader, fileTypeArray){
                 fileExtension = fileExtensionMatch[0];
             }
             if(excludeList.indexOf(file)<0){
-                file = dir + '\\' + file
+                file = dir + '\\' + file;
                 var stat = fileReader.statSync(file);
                 if(stat.isDirectory()){
                     self.readDirectoryContents(file);
@@ -52,13 +52,10 @@ function LineCountSync (directoryReader, fileReader, fileTypeArray){
 
     var getFileType = function(fileExtension)
     {
-      var returnVal;
-      fileTypes.forEach(function(filetype){
-          if(fileExtension === filetype.ext){
-              returnVal = filetype;
-          }
+      var types = fileTypes.filter(function(fileType){
+        return fileType.ext == fileExtension;
       });
-      return returnVal;
+      return types ? types[0] : null;
     };
 
     var countLinesSync = function(file){

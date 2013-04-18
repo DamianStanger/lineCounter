@@ -17,3 +17,6 @@ Which would represent the following information:
 - 17 files found, with 2668 non empty lines in total
 - 15 javascript files with a combined count of 2663 none empty lines
 - 1 txt and md file
+
+## Tests
+The tests were written to be run with mocha, simply ensure mocha is installed globally and type 'mocha' whilst in the root dir
