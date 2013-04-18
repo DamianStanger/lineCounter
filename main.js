@@ -1,8 +1,8 @@
 "use strict";
 
-var LineCountSync = require('../src/LineCountSync'),
-  directoryReader = require('../src/DirectoryReader'),
-  argumentParser = require('../src/argumentParser'),
+var LineCountSync = require('./src/lineCountSync'),
+  directoryReader = require('./src/DirectoryReader'),
+  argumentParser = require('./src/argumentParser'),
   fs = require("fs"),
   counter,
   fileTypes;

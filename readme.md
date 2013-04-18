@@ -3,7 +3,7 @@ _lineCounter_ is a command line driven tool using [node](http://nodejs.org) whic
 You can pass in any number of file types to look for as arguments to the application
 
 ## Example
-    node src/main.js .js .txt .md
+    node main.js .js .txt .md
 
 Would return:
 ```

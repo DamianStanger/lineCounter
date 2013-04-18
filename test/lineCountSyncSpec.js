@@ -1,7 +1,7 @@
 'use strict';
 
 var assert = require("assert"),
-  LineCountSync = require("../src/LineCountSync"),
+  LineCountSync = require("../src/lineCountSync"),
   should = require("should"),
   fileContents = "line1\nline2\n\nline3\n",
   emptyFileContents = "";
