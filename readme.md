@@ -4,10 +4,11 @@ _lineCounter_ is a command line driven tool using [node](http://nodejs.org) whic
     node src/main.js .js .txt .md
 
 Would return:
-    17 2668
-    .js 15 2663
-    .txt 1 0
-    .md 1 5
+```17 2668
+.js 15 2663
+.txt 1 0
+.md 1 5
+```
 
 Would represent the following data:
 - 17 files found in total with 2668 non empty lines
