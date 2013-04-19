@@ -14,7 +14,7 @@ describe('argumentParser', function() {
   it('should return an default array if no arguments to parse', function() {
     var actualParsedArguments;
 
-    actualParsedArguments = parser.parse([]);
+    actualParsedArguments = parser.parse([]).fileTypes;
 
     shouldEqlDefaultArray(actualParsedArguments);
   });
@@ -22,7 +22,7 @@ describe('argumentParser', function() {
   it('should return default array if no file type arguments to parse', function() {
     var actualParsedArguments;
 
-    actualParsedArguments = parser.parse(["aaa", "bbb", "ccc"]);
+    actualParsedArguments = parser.parse(["aaa", "bbb", "ccc"]).fileTypes;
 
     shouldEqlDefaultArray(actualParsedArguments);
   });
@@ -31,7 +31,7 @@ describe('argumentParser', function() {
     var actualParsedArguments,
       bbbType = new FileTypeBuilder().withType(".bbb").build();
 
-    actualParsedArguments = parser.parse([".bbb"]);
+    actualParsedArguments = parser.parse([".bbb"]).fileTypes;
 
     actualParsedArguments.should.eql(bbbType);
   });
@@ -40,7 +40,7 @@ describe('argumentParser', function() {
     var actualParsedArguments,
       threeTypes = new FileTypeBuilder().withTypes([".bbb", ".123", ".eee"]).build();
 
-    actualParsedArguments = parser.parse(["aaa", ".bbb", "ccc", ".123", ".eee"]);
+    actualParsedArguments = parser.parse(["aaa", ".bbb", "ccc", ".123", ".eee"]).fileTypes;
 
     actualParsedArguments.should.eql(threeTypes);
   });
@@ -48,9 +48,26 @@ describe('argumentParser', function() {
   it('should return nothing if malformed file types are passed in', function() {
     var actualParsedArguments;
 
-    actualParsedArguments = parser.parse(["a", "foo.bbb", ".bar.", "a.b.c", ".", "...", "--foo", ".--foo" ]);
+    actualParsedArguments = parser.parse(["a", "foo.bbb", ".bar.", "a.b.c", ".", "...", "--foo", ".--foo" ]).fileTypes;
 
     shouldEqlDefaultArray(actualParsedArguments);
   });
 
+  describe('target Directory', function() {
+    it('should default to the current directory', function() {
+      var parsedArgumnets;
+
+      parsedArgumnets = parser.parse(["node", "main.js", ".java", ".js"]);
+
+      parsedArgumnets.should.have.property("targetDirectory", ".");
+    });
+
+    it('should default to the specified absolute directory', function() {
+      var parsedArgumnets;
+
+      parsedArgumnets = parser.parse(["node", "main.js", "-d:c:\\dir1\\dir2", ".java", ".js"]);
+
+      parsedArgumnets.should.have.property("targetDirectory", "c:\\dir1\\dir2");
+    });
+  });
 });

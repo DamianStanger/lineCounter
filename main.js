@@ -5,16 +5,15 @@ var LineCountSync = require('./src/lineCountSync'),
   argumentParser = require('./src/argumentParser'),
   fs = require("fs"),
   counter,
-  fileTypes;
+  commandArguments;
 
-fileTypes = argumentParser.parse(process.argv);
+commandArguments = argumentParser.parse(process.argv);
 
-counter = new LineCountSync(directoryReader, fs, fileTypes);
+counter = new LineCountSync(directoryReader, fs, commandArguments.fileTypes);
 
+counter.readDirectoryContents(commandArguments.targetDirectory);
 
-counter.readDirectoryContents('.');
 console.log(counter.getStats().totalNumberOfFiles + " " + counter.getStats().totalNumberOfLines);
-
 counter.getStats().fileTypes.forEach(function(filetype) {
   console.log(filetype.ext + " " + filetype.count + " " + filetype.lines);
 });

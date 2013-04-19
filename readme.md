@@ -19,8 +19,8 @@ Which would represent the following information:
 - 1 txt and md file
 
 ## Example 2
-    node ..\..\code\node\lineCounter\main.js .java .js .cs
-    node c:\code\node\lineCounter\main.js .java .js .cs
+    node main.js -d:c:\code\project .java .js .cs
+    node main.js -d:..\project .java .js .cs
 
 This would allow you to run the stats in any folder on the filesystem either with a relative path or an absolute path
 
