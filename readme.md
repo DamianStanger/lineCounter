@@ -2,7 +2,7 @@ _lineCounter_ is a command line driven tool using [node](http://nodejs.org) whic
 
 You can pass in any number of file types to look for as arguments to the application
 
-## Example
+## Example 1
     node main.js .js .txt .md
 
 Would return:
@@ -18,5 +18,11 @@ Which would represent the following information:
 - 15 javascript files with a combined count of 2663 none empty lines
 - 1 txt and md file
 
+## Example 2
+    node ..\..\code\node\lineCounter\main.js .java .js .cs
+    node c:\code\node\lineCounter\main.js .java .js .cs
+
+This would allow you to run the stats in any folder on the filesystem either with a relative path or an absolute path
+
 ## Tests
-The tests were written to be run with mocha, simply ensure mocha is installed globally and type 'mocha' whilst in the root dir
+The tests were written to be run with mocha, simply ensure mocha is installed globally and type 'mocha --recursive' whilst in the root dir
