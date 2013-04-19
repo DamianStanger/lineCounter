@@ -5,7 +5,8 @@ var LineCountSync = require("../../src/lineCountSync"),
   should = require("should"),
   fileContents = "line1\nline2\n\nline3\n",
   emptyFileContents = "",
-  FileTypeBuilder = require('../fileTypeBuilder.js');
+  FileTypeBuilder = require('../fileTypeBuilder.js'),
+  sinon = require('sinon');
 
 describe('lineCountSync', function() {
   var defaultFileTypes;
@@ -85,5 +86,46 @@ describe('lineCountSync', function() {
         {ext : '.h', count : 3, lines : 9},
         {ext : '.txt', count : 1, lines : 3}]);
     });
+  });
+
+  it('should test sinon', function() {
+    var callback = sinon.stub();
+    callback.withArgs(42).returns(1);
+    callback.withArgs(1).returns("foobar");
+
+    should.not.exist(callback());
+    callback(42).should.equal(1);
+    callback(1).should.equal("foobar");
+  });
+
+  it('should recursively query down the directory tree', function() {
+    var readDirectoryContents = sinon.stub(),
+      statSync = sinon.stub(),
+      readFileSync = sinon.stub(),
+      directoryReader = {"readDirectoryContents" : readDirectoryContents},
+      fileReader = {"statSync" : statSync, "readFileSync" : readFileSync},
+      lineCounter = new LineCountSync(directoryReader, fileReader, defaultFileTypes);
+
+    readDirectoryContents.withArgs(".").returns(["file1.js", "dir1", "file2.js"]);
+    readDirectoryContents.withArgs(".\\dir1").returns(["file3.js", "dir2"]);
+    readDirectoryContents.withArgs(".\\dir1\\dir2").returns(["file4.css", "file5.js"]);
+    statSync.withArgs(".\\dir1").returns({isDirectory : function() {return true; }});
+    statSync.withArgs(".\\dir1\\dir2").returns({isDirectory : function() {return true; }});
+    statSync.withArgs(".\\file1.js").returns({isDirectory : function() {return false; }});
+    statSync.withArgs(".\\file2.js").returns({isDirectory : function() {return false; }});
+    statSync.withArgs(".\\dir1\\file3.js").returns({isDirectory : function() {return false; }});
+    statSync.withArgs(".\\dir1\\dir2\\file4.css").returns({isDirectory : function() {return false; }});
+    statSync.withArgs(".\\dir1\\dir2\\file5.js").returns({isDirectory : function() {return false; }});
+//    statSync.returns({isDirectory : function() {return false; }});
+    readFileSync.returns("");
+
+    lineCounter.readDirectoryContents('.');
+
+    lineCounter.getStats().totalNumberOfFiles.should.equal(5);
+    lineCounter.getStats().totalNumberOfLines.should.equal(0);
+
+    lineCounter.getStats().fileTypes.should.eql([{ext : '.js', count : 4, lines : 0},
+      {ext : '.css', count : 1, lines : 0},
+      {ext : '.java', count : 0, lines : 0}]);
   });
 });
