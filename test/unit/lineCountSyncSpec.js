@@ -88,16 +88,6 @@ describe('lineCountSync', function() {
     });
   });
 
-  it('should test sinon', function() {
-    var callback = sinon.stub();
-    callback.withArgs(42).returns(1);
-    callback.withArgs(1).returns("foobar");
-
-    should.not.exist(callback());
-    callback(42).should.equal(1);
-    callback(1).should.equal("foobar");
-  });
-
   it('should recursively query down the directory tree', function() {
     var readDirectoryContents = sinon.stub(),
       statSync = sinon.stub(),
@@ -124,7 +114,8 @@ describe('lineCountSync', function() {
     lineCounter.getStats().totalNumberOfFiles.should.equal(5);
     lineCounter.getStats().totalNumberOfLines.should.equal(0);
 
-    lineCounter.getStats().fileTypes.should.eql([{ext : '.js', count : 4, lines : 0},
+    lineCounter.getStats().fileTypes.should.eql([
+      {ext : '.js', count : 4, lines : 0},
       {ext : '.css', count : 1, lines : 0},
       {ext : '.java', count : 0, lines : 0}]);
   });
