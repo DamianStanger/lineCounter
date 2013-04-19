@@ -1,8 +1,8 @@
 "use strict";
 
-var parser = require("../src/argumentParser.js"),
+var parser = require("../../src/argumentParser.js"),
     should = require("should"),
-    FileTypeBuilder = require('../test/fileTypeBuilder.js');
+    FileTypeBuilder = require('../fileTypeBuilder.js');
 
 describe('argumentParser', function(){
   it('should return an default array if no arguments to parse', function(){
