@@ -19,4 +19,4 @@ Which would represent the following information:
 - 1 txt and md file
 
 ## Tests
-The tests were written to be run with mocha, simply ensure mocha is installed globally and type 'mocha' whilst in the root dir
+The tests were written to be run with mocha, simply ensure mocha is installed globally and type 'mocha --recursive' whilst in the root dir
