@@ -1,7 +1,8 @@
 "use strict";
 
 var parser = require("../src/argumentParser.js"),
-    should = require("should");
+    should = require("should"),
+    FileTypeBuilder = require('../test/fileTypeBuilder.js');
 
 describe('argumentParser', function(){
   it('should return an default array if no arguments to parse', function(){
@@ -25,7 +26,8 @@ describe('argumentParser', function(){
 
     actualParsedArguments = parser.parse([".bbb"]);
 
-    actualParsedArguments.should.eql(createTypes([".bbb"]));
+    var bbbType = new FileTypeBuilder().withType(".bbb").build();
+    actualParsedArguments.should.eql(bbbType);
   });
 
   it('should return many values, one for each file type specified', function(){
@@ -33,7 +35,8 @@ describe('argumentParser', function(){
 
     actualParsedArguments = parser.parse(["aaa", ".bbb", "ccc", ".123", ".eee"]);
 
-    actualParsedArguments.should.eql(createTypes([".bbb", ".123", ".eee"]));
+    var threeTypes = new FileTypeBuilder().withTypes([".bbb", ".123", ".eee"]).build();
+    actualParsedArguments.should.eql(threeTypes);
   });
 
   it('should return nothing if alformed filetypes are passed in', function(){
@@ -47,13 +50,6 @@ describe('argumentParser', function(){
 });
 
 function shouldEqlDefaultArray(actualParsedArguments) {
-  actualParsedArguments.should.eql(createTypes(['.js', '.css', '.java']));
-}
-
-function createTypes(arrayOfTypes){
-  var types = [];
-  arrayOfTypes.forEach(function(type){
-    types.push({ext:type, count:0, lines:0});
-  });
-  return types;
-}
+  var defaultTypes = new FileTypeBuilder().withTypes(['.js', '.css', '.java']).build();
+  actualParsedArguments.should.eql(defaultTypes);
+};

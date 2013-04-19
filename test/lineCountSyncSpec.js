@@ -4,15 +4,15 @@ var assert = require("assert"),
   LineCountSync = require("../src/lineCountSync"),
   should = require("should"),
   fileContents = "line1\nline2\n\nline3\n",
-  emptyFileContents = "";
+  emptyFileContents = "",
+  FileTypeBuilder = require('../test/fileTypeBuilder.js');
 
 describe('lineCountSync', function(){
   var defaultFileTypes;
 
   beforeEach(function(){
-    defaultFileTypes = createTypes(['.js', '.css', '.java']);
+    defaultFileTypes = new FileTypeBuilder().withTypes(['.js', '.css', '.java']).build();
   });
-
 
   it('should count lines and populate global stats', function() {
     var directoryReader = {"readDirectoryContents":function(){return ["foo.js", "bar.js"];}},
@@ -87,7 +87,7 @@ describe('lineCountSync', function(){
             return {"isDirectory":function(){return false;}};},
             "readFileSync":function(){return fileContents;}
           },
-          fileTypes = createTypes([".js"]),
+          fileTypes = new FileTypeBuilder().withType(".js").build(),
           lineCounter = new LineCountSync(directoryReader, fileReader, fileTypes);
 
       lineCounter.readDirectoryContents('my fake directory');
@@ -103,7 +103,7 @@ describe('lineCountSync', function(){
           return {"isDirectory":function(){return false;}};},
           "readFileSync":function(){return fileContents;}
         },
-        fileTypes = createTypes([".js", ".h", ".txt"]),
+        fileTypes = new FileTypeBuilder().withTypes([".js", ".h", ".txt"]).build(),
         lineCounter = new LineCountSync(directoryReader, fileReader, fileTypes);
 
       lineCounter.readDirectoryContents('my fake directory');
@@ -115,11 +115,3 @@ describe('lineCountSync', function(){
     });
   })
 });
-
-function createTypes(arrayOfTypes){
-  var types = [];
-  arrayOfTypes.forEach(function(type){
-    types.push({ext:type, count:0, lines:0});
-  });
-  return types;
-}
