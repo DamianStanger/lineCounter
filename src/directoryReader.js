@@ -1,3 +1,4 @@
+/*global require*/
 "use strict";
 
 var fs = require("fs");
