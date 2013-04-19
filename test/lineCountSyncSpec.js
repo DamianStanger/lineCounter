@@ -7,9 +7,10 @@ var assert = require("assert"),
   emptyFileContents = "";
 
 describe('lineCountSync', function(){
-  var lineCounter;
+  var defaultFileTypes;
 
   beforeEach(function(){
+    defaultFileTypes = createTypes(['.js', '.css', '.java']);
   });
 
 
@@ -18,9 +19,9 @@ describe('lineCountSync', function(){
         fileReader = {"statSync":function(){
           return {"isDirectory":function(){return false;}};},
           "readFileSync":function(){return fileContents;}
-        };
+        },
+        lineCounter = new LineCountSync(directoryReader, fileReader, defaultFileTypes);
 
-    lineCounter = new LineCountSync(directoryReader, fileReader);
     lineCounter.readDirectoryContents('my fake directory');
 
     lineCounter.getStats().totalNumberOfFiles.should.equal(2);
@@ -32,9 +33,9 @@ describe('lineCountSync', function(){
         fileReader = {"statSync":function(){
           return {"isDirectory":function(){return false;}};},
           "readFileSync":function(){return fileContents;}
-        };
+        },
+        lineCounter = new LineCountSync(directoryReader, fileReader, defaultFileTypes);
 
-    lineCounter = new LineCountSync(directoryReader, fileReader);
     lineCounter.readDirectoryContents('my fake directory');
 
     lineCounter.getStats().totalNumberOfFiles.should.equal(1);
@@ -49,9 +50,9 @@ describe('lineCountSync', function(){
         fileReader = {"statSync":function(){
           return {"isDirectory":function(){return false;}};},
           "readFileSync":function(){return fileContents;}
-        };
+        },
+        lineCounter = new LineCountSync(directoryReader, fileReader, defaultFileTypes);
 
-    lineCounter = new LineCountSync(directoryReader, fileReader);
     lineCounter.readDirectoryContents('my fake directory');
 
     lineCounter.getStats().totalNumberOfFiles.should.equal(2);
@@ -66,9 +67,9 @@ describe('lineCountSync', function(){
       fileReader = {"statSync":function(){
         return {"isDirectory":function(){return false;}};},
         "readFileSync":function(){return emptyFileContents;}
-      };
+      },
+      lineCounter = new LineCountSync(directoryReader, fileReader, defaultFileTypes);
 
-    lineCounter = new LineCountSync(directoryReader, fileReader);
     lineCounter.readDirectoryContents('my fake directory');
 
     lineCounter.getStats().totalNumberOfFiles.should.equal(1);
@@ -86,9 +87,9 @@ describe('lineCountSync', function(){
             return {"isDirectory":function(){return false;}};},
             "readFileSync":function(){return fileContents;}
           },
-          fileTypes = [".js"];
+          fileTypes = createTypes([".js"]),
+          lineCounter = new LineCountSync(directoryReader, fileReader, fileTypes);
 
-      lineCounter = new LineCountSync(directoryReader, fileReader, fileTypes);
       lineCounter.readDirectoryContents('my fake directory');
 
       lineCounter.getStats().totalNumberOfFiles.should.equal(1);
@@ -102,9 +103,9 @@ describe('lineCountSync', function(){
           return {"isDirectory":function(){return false;}};},
           "readFileSync":function(){return fileContents;}
         },
-        fileTypes = [".js", ".h", ".txt"];
+        fileTypes = createTypes([".js", ".h", ".txt"]),
+        lineCounter = new LineCountSync(directoryReader, fileReader, fileTypes);
 
-      lineCounter = new LineCountSync(directoryReader, fileReader, fileTypes);
       lineCounter.readDirectoryContents('my fake directory');
 
       lineCounter.getStats().totalNumberOfFiles.should.equal(4);
@@ -114,3 +115,11 @@ describe('lineCountSync', function(){
     });
   })
 });
+
+function createTypes(arrayOfTypes){
+  var types = [];
+  arrayOfTypes.forEach(function(type){
+    types.push({ext:type, count:0, lines:0});
+  });
+  return types;
+}

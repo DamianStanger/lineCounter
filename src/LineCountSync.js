@@ -1,22 +1,10 @@
 "use strict";
 
-function LineCountSync (directoryReader, fileReader, fileTypeArray){
+function LineCountSync (directoryReader, fileReader, fileTypes){
     var totalNumberOfFiles = 0,
         totalNumberOfLines = 0,
         excludeList = ['.git', 'node_modules', '.idea', 'lib'],
-        fileTypes = [],
         self = this;
-
-    if(!fileTypeArray || fileTypeArray.length < 1){
-      console.log("no file type arguments exist, defaulting to node main.js .js .css .java");
-      fileTypes = [{ext:'.js', count:0, lines:0},
-          {ext:'.css', count:0, lines:0},
-          {ext:'.java', count:0, lines:0}];
-    }else{
-      fileTypeArray.forEach(function(fileType){
-        fileTypes.push({ext:fileType, count:0, lines:0});
-      });
-    }
 
     this.getStats = function(){
       return {"totalNumberOfFiles":totalNumberOfFiles,
