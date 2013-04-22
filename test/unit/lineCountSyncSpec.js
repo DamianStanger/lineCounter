@@ -2,7 +2,6 @@
 'use strict';
 
 var LineCountSync = require("../../src/lineCountSync"),
-  should = require("should"),
   fileContents = "line1\nline2\n\nline3\n",
   emptyFileContents = "",
   FileTypeBuilder = require('../fileTypeBuilder.js'),

@@ -1,8 +1,7 @@
 /*global describe, it*/
 "use strict";
 
-var reader = require("../../src/directoryReader.js"),
-  should = require("should");
+var reader = require("../../src/directoryReader.js");
 
 describe("directoryReader", function() {
 
