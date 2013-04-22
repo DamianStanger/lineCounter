@@ -70,4 +70,14 @@ describe('argumentParser', function() {
       parsedArgumnets.should.have.property("targetDirectory", "c:\\dir1\\dir2");
     });
   });
+
+  describe('dynamic type flag', function() {
+    it('should be true', function () {
+      var parsedArguments;
+
+      parsedArguments = parser.parse(["node", "main.js", "-dynamicTypes"]);
+
+      parsedArguments.should.have.property("dynamicTypes", true);
+    });
+  });
 });
