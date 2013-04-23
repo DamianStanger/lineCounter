@@ -10,10 +10,10 @@ You can pass in any number of file types to look for as arguments to the applica
 
 Would return:
 ```
-17 2668
-.js 15 2663
+13 403
+.js 11 377
 .txt 1 0
-.md 1 5
+.md 1 26
 ```
 
 Which would represent the following information:
@@ -28,9 +28,20 @@ Which would represent the following information:
 This would allow you to run the stats in any folder on the filesystem either with a relative path or an absolute path
 
 ## Example 3
+Find stats for all the fileTypes in the current directory
     node main.js -dynamicTypes:true
 
-Find stats for all the fileTypes in the current directory
+would return:
+```
+15 431
+.js 11 377
+.css 0 0
+.java 0 0
+.gitignore 1 2
+.log 1 23
+.md 1 29
+.txt 1 0
+```
 
 ## Tests
 The tests were written to be run with mocha, simply ensure mocha is installed globally and type 'mocha --recursive' whilst in the root dir
