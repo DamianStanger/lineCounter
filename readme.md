@@ -2,6 +2,9 @@ _lineCounter_ is a command line driven tool using [node](http://nodejs.org) whic
 
 You can pass in any number of file types to look for as arguments to the application
 
+## Usage
+    node main.js [filetypes] [-d:targetDirectory] [-dynamicTypes:true]
+
 ## Example 1
     node main.js .js .txt .md
 
@@ -23,6 +26,11 @@ Which would represent the following information:
     node main.js -d:..\project .java .js .cs
 
 This would allow you to run the stats in any folder on the filesystem either with a relative path or an absolute path
+
+## Example 3
+    node main.js -dynamicTypes:true
+
+Find stats for all the fileTypes in the current directory
 
 ## Tests
 The tests were written to be run with mocha, simply ensure mocha is installed globally and type 'mocha --recursive' whilst in the root dir
