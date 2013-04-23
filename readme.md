@@ -45,3 +45,14 @@ would return:
 
 ## Tests
 The tests were written to be run with mocha, simply ensure mocha is installed globally and type 'mocha --recursive' whilst in the root dir
+
+## NOTES
+Certain directories are ignored by default and there is currently no way to turn this off or change them at run time. These are:
+```
+'.git', 'node_modules', '.idea', 'lib'
+```
+
+If no file types have been specified and dynamicTypes is off then you get 3 types by default:
+```
+.js, .css, .java
+```
