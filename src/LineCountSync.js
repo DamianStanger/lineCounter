@@ -1,16 +1,22 @@
 /*global module*/
 "use strict";
 
-function LineCountSync(directoryReader, fileReader, fileTypes) {
+function LineCountSync(directoryReader, fileReader, fileTypes, dynamicTypes) {
   var totalNumberOfFiles = 0,
     totalNumberOfLines = 0,
     excludeList = ['.git', 'node_modules', '.idea', 'lib'],
     self = this,
 
     getFileType = function (fileExtension) {
-      var types = fileTypes.filter(function (fileType) {
-        return fileType.ext === fileExtension;
-      });
+      var newType,
+        types = fileTypes.filter(function (fileType) {
+          return fileType.ext === fileExtension;
+        });
+      if (!(types && types[0]) && dynamicTypes) {
+        newType = {ext: fileExtension, count: 0, lines: 0};
+        fileTypes.push(newType);
+        return newType;
+      }
       return types ? types[0] : null;
     },
 

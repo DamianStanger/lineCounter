@@ -72,10 +72,18 @@ describe('argumentParser', function() {
   });
 
   describe('dynamic type flag', function() {
+    it('should be false by default', function () {
+      var parsedArguments;
+
+      parsedArguments = parser.parse(["node", "main.js"]);
+
+      parsedArguments.should.have.property("dynamicTypes", false);
+    });
+
     it('should be true', function () {
       var parsedArguments;
 
-      parsedArguments = parser.parse(["node", "main.js", "-dynamicTypes"]);
+      parsedArguments = parser.parse(["node", "main.js", "-dynamicTypes:true"]);
 
       parsedArguments.should.have.property("dynamicTypes", true);
     });

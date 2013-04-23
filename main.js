@@ -8,10 +8,9 @@ var LineCountSync = require('./src/lineCountSync'),
   counter,
   commandArguments;
 
-
 commandArguments = argumentParser.parse(process.argv);
 
-counter = new LineCountSync(directoryReader, fs, commandArguments.fileTypes);
+counter = new LineCountSync(directoryReader, fs, commandArguments.fileTypes, commandArguments.dynamicTypes);
 
 counter.readDirectoryContents(commandArguments.targetDirectory);
 

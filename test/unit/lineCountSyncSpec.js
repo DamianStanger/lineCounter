@@ -87,6 +87,31 @@ describe('lineCountSync', function() {
     });
   });
 
+  describe('dynamicTypes', function() {
+    it('should find types dynamically', function() {
+      var readDirectoryContents = sinon.stub(),
+        statSync = sinon.stub(),
+        readFileSync = sinon.stub(),
+        directoryReader = {"readDirectoryContents" : readDirectoryContents},
+        fileReader = {"statSync" : statSync, "readFileSync" : readFileSync},
+        lineCounter = new LineCountSync(directoryReader, fileReader, [], true);
+
+      readDirectoryContents.withArgs(".").returns(["file1.js", "file2.ps1", "file3.js", "file4.bat", "file5.bat", "file6.js"]);
+      statSync.returns({isDirectory : function() {return false; }});
+      readFileSync.returns("aaa\nbbb");
+
+      lineCounter.readDirectoryContents('.');
+
+      lineCounter.getStats().totalNumberOfFiles.should.equal(6);
+      lineCounter.getStats().totalNumberOfLines.should.equal(12);
+
+      lineCounter.getStats().fileTypes.should.eql([
+        {ext : '.js', count : 3, lines : 6},
+        {ext : '.ps1', count : 1, lines : 2},
+        {ext : '.bat', count : 2, lines : 4}]);
+    });
+  });
+
   it('should recursively query down the directory tree', function() {
     var readDirectoryContents = sinon.stub(),
       statSync = sinon.stub(),

@@ -12,7 +12,8 @@ var createDefaultTypes = function() {
 
 exports.parse = function(potentialFileTypes) {
   var fileTypes = [],
-    targetDirectory = ".";
+    targetDirectory = ".",
+    dynamicTypes = false;
 
   potentialFileTypes.forEach(function(fileType) {
     if (fileType.match(/^\.\w+$/)) {
@@ -21,11 +22,17 @@ exports.parse = function(potentialFileTypes) {
     if (fileType.match(/^-d:/)) {
       targetDirectory = fileType.replace("-d:", "");
     }
+    if (fileType.match(/^-dynamicTypes:true/)) {
+      dynamicTypes = true;
+    }
   });
   if (fileTypes.length === 0) {
     fileTypes = createDefaultTypes();
   }
-  return {"fileTypes" : fileTypes, "targetDirectory" : targetDirectory};
+
+  return {"fileTypes" : fileTypes,
+    "targetDirectory" : targetDirectory,
+    "dynamicTypes" : dynamicTypes};
 };
 
 
