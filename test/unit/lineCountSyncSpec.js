@@ -5,7 +5,8 @@ var LineCountSync = require("../../src/lineCountSync"),
   fileContents = "line1\nline2\n\nline3\n",
   emptyFileContents = "",
   FileTypeBuilder = require('../fileTypeBuilder.js'),
-  sinon = require('sinon');
+  sinon = require('sinon'),
+  path = require('path');
 
 describe('lineCountSync', function() {
   var defaultFileTypes;
@@ -121,15 +122,15 @@ describe('lineCountSync', function() {
       lineCounter = new LineCountSync(directoryReader, fileReader, defaultFileTypes);
 
     readDirectoryContents.withArgs(".").returns(["file1.js", "dir1", "file2.js"]);
-    readDirectoryContents.withArgs(".\\dir1").returns(["file3.js", "dir2"]);
-    readDirectoryContents.withArgs(".\\dir1\\dir2").returns(["file4.css", "file5.js"]);
-    statSync.withArgs(".\\dir1").returns({isDirectory : function() {return true; }});
-    statSync.withArgs(".\\dir1\\dir2").returns({isDirectory : function() {return true; }});
-    statSync.withArgs(".\\file1.js").returns({isDirectory : function() {return false; }});
-    statSync.withArgs(".\\file2.js").returns({isDirectory : function() {return false; }});
-    statSync.withArgs(".\\dir1\\file3.js").returns({isDirectory : function() {return false; }});
-    statSync.withArgs(".\\dir1\\dir2\\file4.css").returns({isDirectory : function() {return false; }});
-    statSync.withArgs(".\\dir1\\dir2\\file5.js").returns({isDirectory : function() {return false; }});
+    readDirectoryContents.withArgs("dir1").returns(["file3.js", "dir2"]);
+    readDirectoryContents.withArgs(path.join("dir1", "dir2")).returns(["file4.css", "file5.js"]);
+    statSync.withArgs("dir1").returns({isDirectory : function() {return true; }});
+    statSync.withArgs(path.join("dir1", "dir2")).returns({isDirectory : function() {return true; }});
+    statSync.withArgs("file1.js").returns({isDirectory : function() {return false; }});
+    statSync.withArgs("file2.js").returns({isDirectory : function() {return false; }});
+    statSync.withArgs(path.join("dir1", "file3.js")).returns({isDirectory : function() {return false; }});
+    statSync.withArgs(path.join("dir1", "dir2", "file4.css")).returns({isDirectory : function() {return false; }});
+    statSync.withArgs(path.join("dir1", "dir2", "file5.js")).returns({isDirectory : function() {return false; }});
 //    statSync.returns({isDirectory : function() {return false; }});
     readFileSync.returns("");
 

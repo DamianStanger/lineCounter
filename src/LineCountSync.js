@@ -5,12 +5,16 @@ var fileTypeCreator = require('../src/fileTypeCreator');
 
 function LineCountSync(directoryReader, fileReader, fileTypes, dynamicTypes) {
 
-  var totalNumberOfFiles = 0,
+  var path = require('path'),
+    totalNumberOfFiles = 0,
     totalNumberOfLines = 0,
     excludeList = ['.git', 'node_modules', '.idea', 'lib'],
     self = this,
+    fileExtensionRegex = /\.\w+$/,
+    linesWithAtLeastOneNonSpaceCharacterRegex = /.*\S+.*/g,
 
-    createNewFileType = function(fileExtension) {
+
+  createNewFileType = function(fileExtension) {
       var newType = fileTypeCreator.createType(fileExtension);
       fileTypes.push(newType);
       return newType;
@@ -28,7 +32,7 @@ function LineCountSync(directoryReader, fileReader, fileTypes, dynamicTypes) {
 
     countLinesSync = function (file) {
       var contents = fileReader.readFileSync(file, 'utf8'),
-        matches = contents.match(/.*\S+.*/g);
+        matches = contents.match(linesWithAtLeastOneNonSpaceCharacterRegex);
       if (matches) {
         totalNumberOfLines += matches.length;
         return matches.length;
@@ -60,7 +64,7 @@ function LineCountSync(directoryReader, fileReader, fileTypes, dynamicTypes) {
       stat;
 
     files.forEach(function (file) {
-      var fileExtensionMatch = file.match(/\.\w+$/),
+      var fileExtensionMatch = file.match(fileExtensionRegex),
         fileExtension = ".";
 
       if (fileExtensionMatch) {
@@ -68,7 +72,7 @@ function LineCountSync(directoryReader, fileReader, fileTypes, dynamicTypes) {
       }
 
       if (includeThisFile(file)) {
-        file = dir + '\\' + file;
+        file = path.join(dir, file);
         stat = fileReader.statSync(file);
         if (stat.isDirectory()) {
           self.readDirectoryContents(file);
