@@ -1,21 +1,27 @@
 /*global module*/
 "use strict";
 
+var fileTypeCreator = require('../src/fileTypeCreator');
+
 function LineCountSync(directoryReader, fileReader, fileTypes, dynamicTypes) {
+
   var totalNumberOfFiles = 0,
     totalNumberOfLines = 0,
     excludeList = ['.git', 'node_modules', '.idea', 'lib'],
     self = this,
 
+    createNewFileType = function(fileExtension) {
+      var newType = fileTypeCreator.createType(fileExtension);
+      fileTypes.push(newType);
+      return newType;
+    },
+
     getFileType = function (fileExtension) {
-      var newType,
-        types = fileTypes.filter(function (fileType) {
+      var types = fileTypes.filter(function (fileType) {
           return fileType.ext === fileExtension;
         });
       if (!(types && types[0]) && dynamicTypes) {
-        newType = {ext: fileExtension, count: 0, lines: 0};
-        fileTypes.push(newType);
-        return newType;
+        return createNewFileType(fileExtension);
       }
       return types ? types[0] : null;
     },

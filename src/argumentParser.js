@@ -1,13 +1,12 @@
 "use strict";
 
-var createType = function(typeExtension) {
-  return {ext : typeExtension, count : 0, lines : 0};
-};
+var fileTypeCreator = require('../src/fileTypeCreator');
 
 var createDefaultTypes = function() {
-  return [createType(".js"),
-    createType('.css'),
-    createType('.java')];
+  return [
+    fileTypeCreator.createType(".js"),
+    fileTypeCreator.createType('.css'),
+    fileTypeCreator.createType('.java')];
 };
 
 exports.parse = function(potentialFileTypes) {
@@ -17,7 +16,7 @@ exports.parse = function(potentialFileTypes) {
 
   potentialFileTypes.forEach(function(fileType) {
     if (fileType.match(/^\.\w+$/)) {
-      fileTypes.push(createType(fileType));
+      fileTypes.push(fileTypeCreator.createType(fileType));
     }
     if (fileType.match(/^-d:/)) {
       targetDirectory = fileType.replace("-d:", "");
