@@ -87,5 +87,14 @@ describe('argumentParser', function() {
 
       parsedArguments.should.have.property("dynamicTypes", true);
     });
+
+    it('should not use the arguments passed in', function() {
+      var parsedArguments;
+
+      parsedArguments = parser.parse(["node", "main.js", ".foo", "-dynamicTypes:true", ".bar"]);
+
+      parsedArguments.should.have.property("dynamicTypes", true);
+      parsedArguments.fileTypes.should.eql([]);
+    });
   });
 });

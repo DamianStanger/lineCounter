@@ -14,4 +14,5 @@ counter = new LineCountSync(directoryReader, fs, commandArguments.fileTypes, com
 
 counter.readDirectoryContents(commandArguments.targetDirectory);
 
-new Reporter(console).report(counter.getStats());
+var consoleReporter = new Reporter(console);
+consoleReporter.report(counter.getStats());

@@ -17,16 +17,17 @@ exports.parse = function(potentialFileTypes) {
   potentialFileTypes.forEach(function(fileType) {
     if (fileType.match(/^\.\w+$/)) {
       fileTypes.push(fileTypeCreator.createType(fileType));
-    }
-    if (fileType.match(/^-d:/)) {
+    } else if (fileType.match(/^-d:/)) {
       targetDirectory = fileType.replace("-d:", "");
-    }
-    if (fileType.match(/^-dynamicTypes:true/)) {
+    } else if (fileType.match(/^-dynamicTypes:true/)) {
       dynamicTypes = true;
     }
   });
-  if (fileTypes.length === 0) {
+
+  if (fileTypes.length === 0 && !dynamicTypes) {
     fileTypes = createDefaultTypes();
+  } else if (dynamicTypes) {
+    fileTypes = [];
   }
 
   return {"fileTypes" : fileTypes,
