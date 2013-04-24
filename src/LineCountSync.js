@@ -34,6 +34,19 @@ function LineCountSync(directoryReader, fileReader, fileTypes, dynamicTypes) {
         return matches.length;
       }
       return 0;
+    },
+
+    includeThisFile = function (file) {
+      return excludeList.indexOf(file) < 0;
+    },
+
+    countFileStats = function (fileExtension, file) {
+      var fileType = getFileType(fileExtension);
+      if (fileType) {
+        fileType.count += 1;
+        totalNumberOfFiles += 1;
+        fileType.lines += countLinesSync(file);
+      }
     };
 
   this.getStats = function () {
@@ -44,8 +57,7 @@ function LineCountSync(directoryReader, fileReader, fileTypes, dynamicTypes) {
 
   this.readDirectoryContents = function (dir) {
     var files = directoryReader.readDirectoryContents(dir),
-      stat,
-      fileType;
+      stat;
 
     files.forEach(function (file) {
       var fileExtensionMatch = file.match(/\.\w+$/),
@@ -55,18 +67,13 @@ function LineCountSync(directoryReader, fileReader, fileTypes, dynamicTypes) {
         fileExtension = fileExtensionMatch[0];
       }
 
-      if (excludeList.indexOf(file) < 0) {
+      if (includeThisFile(file)) {
         file = dir + '\\' + file;
         stat = fileReader.statSync(file);
         if (stat.isDirectory()) {
           self.readDirectoryContents(file);
         } else {
-          fileType = getFileType(fileExtension);
-          if (fileType) {
-            fileType.count += 1;
-            totalNumberOfFiles += 1;
-            fileType.lines += countLinesSync(file);
-          }
+          countFileStats(fileExtension, file);
         }
       }
     });
