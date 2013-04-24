@@ -5,8 +5,8 @@ function Reporter(logger) {
 
   this.report = function (stats) {
     reportLogger.log(stats.totalNumberOfFiles + " " + stats.totalNumberOfLines);
-    stats.fileTypes.forEach(function(filetype) {
-      reportLogger.log(filetype.ext + " " + filetype.count + " " + filetype.lines);
+    stats.fileTypes.forEach(function(fileType) {
+      reportLogger.log(fileType.ext + " " + fileType.count + " " + fileType.lines);
     });
   };
 }

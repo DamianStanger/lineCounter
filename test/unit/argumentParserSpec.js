@@ -55,19 +55,19 @@ describe('argumentParser', function() {
 
   describe('target Directory', function() {
     it('should default to the current directory', function() {
-      var parsedArgumnets;
+      var parsedArguments;
 
-      parsedArgumnets = parser.parse(["node", "main.js", ".java", ".js"]);
+      parsedArguments = parser.parse(["node", "main.js", ".java", ".js"]);
 
-      parsedArgumnets.should.have.property("targetDirectory", ".");
+      parsedArguments.should.have.property("targetDirectory", ".");
     });
 
     it('should default to the specified absolute directory', function() {
-      var parsedArgumnets;
+      var parsedArguments;
 
-      parsedArgumnets = parser.parse(["node", "main.js", "-d:c:\\dir1\\dir2", ".java", ".js"]);
+      parsedArguments = parser.parse(["node", "main.js", "-d:c:\\dir1\\dir2", ".java", ".js"]);
 
-      parsedArgumnets.should.have.property("targetDirectory", "c:\\dir1\\dir2");
+      parsedArguments.should.have.property("targetDirectory", "c:\\dir1\\dir2");
     });
   });
 
