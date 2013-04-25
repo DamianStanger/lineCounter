@@ -1,29 +1,41 @@
-/*global require, describe, it*/
+/*global require, describe, it, beforeEach*/
 'use strict';
 
 var LineCountSync = require("../../src/lineCountSync"),
-  fileContents = "line1\nline2\n\nline3\n",
+  fileContentsWith3Lines = "line1\nline2\n\nline3\n",
+  fileContentsWith2Lines = "line1\nline2",
   emptyFileContents = "",
   FileTypeBuilder = require('../fileTypeBuilder.js'),
   sinon = require('sinon'),
   path = require('path');
 
 describe('lineCountSync', function() {
-  var defaultFileTypes;
+  var defaultFileTypes,
+    stubReadDirectoryContents,
+    stubStatSync,
+    stubReadFileSync,
+    stubDirectoryReader,
+    stubFileReader;
 
   beforeEach(function() {
-    defaultFileTypes = new FileTypeBuilder().withTypes(['.js', '.css', '.java']).build();
+    defaultFileTypes = new FileTypeBuilder().withTypes(['.js', '.css', '.java']).build(),
+    stubReadDirectoryContents = sinon.stub(),
+    stubStatSync = sinon.stub(),
+    stubReadFileSync = sinon.stub(),
+    stubDirectoryReader = {"readDirectoryContents" : stubReadDirectoryContents},
+    stubFileReader = {"statSync" : stubStatSync, "readFileSync" : stubReadFileSync};
   });
 
+
   it('should count lines and populate stats on js files', function() {
-    var directoryReader = {"readDirectoryContents" : function() {return ["foo.csv", "doh.txt", "bar.js", "doh.h"]; }},
-      fileReader = {"statSync" : function() {
-        return {"isDirectory" : function() {return false; }};
-      },
-        "readFileSync" : function() {return fileContents; }},
-      lineCounter = new LineCountSync(directoryReader, fileReader, defaultFileTypes);
+    var lineCounter = new LineCountSync(stubDirectoryReader, stubFileReader, defaultFileTypes);
+    stubReadDirectoryContents.withArgs("my fake directory").returns(["foo.csv", "doh.txt", "bar.js", "doh.h"]);
+    stubStatSync.returns({isDirectory : function() {return false; }});
+    stubReadFileSync.returns(fileContentsWith3Lines);
+
 
     lineCounter.readDirectoryContents('my fake directory');
+
 
     lineCounter.getStats().totalNumberOfFiles.should.equal(1);
     lineCounter.getStats().totalNumberOfLines.should.equal(3);
@@ -33,14 +45,14 @@ describe('lineCountSync', function() {
   });
 
   it('should count empty files but not the line count', function() {
-    var directoryReader = {"readDirectoryContents" : function() {return ["foo.js"]; }},
-      fileReader = {"statSync" : function() {
-        return {"isDirectory" : function() {return false; }};
-      },
-        "readFileSync" : function() {return emptyFileContents; }},
-      lineCounter = new LineCountSync(directoryReader, fileReader, defaultFileTypes);
+    var lineCounter = new LineCountSync(stubDirectoryReader, stubFileReader, defaultFileTypes);
+    stubReadDirectoryContents.withArgs("my fake directory").returns(["foo.js"]);
+    stubStatSync.returns({isDirectory : function() {return false; }});
+    stubReadFileSync.returns(emptyFileContents);
+
 
     lineCounter.readDirectoryContents('my fake directory');
+
 
     lineCounter.getStats().totalNumberOfFiles.should.equal(1);
     lineCounter.getStats().totalNumberOfLines.should.equal(0);
@@ -52,16 +64,15 @@ describe('lineCountSync', function() {
 
   describe('user defined file types', function() {
     it('should get stats for only js files', function() {
-      var directoryReader = {"readDirectoryContents" : function() {return ["foo.js", "bar.java", "doh.h"]; }},
-        fileReader = {"statSync" : function() {
-          return {"isDirectory" : function() {return false; }};
-        },
-          "readFileSync" : function() {return fileContents; }
-          },
-        fileTypes = new FileTypeBuilder().withType(".js").build(),
-        lineCounter = new LineCountSync(directoryReader, fileReader, fileTypes);
+      var fileTypes = new FileTypeBuilder().withType(".js").build(),
+        lineCounter = new LineCountSync(stubDirectoryReader, stubFileReader, fileTypes);
+      stubReadDirectoryContents.withArgs("my fake directory").returns(["foo.js", "bar.java", "doh.h"]);
+      stubStatSync.returns({isDirectory : function() {return false; }});
+      stubReadFileSync.returns(fileContentsWith3Lines);
+
 
       lineCounter.readDirectoryContents('my fake directory');
+
 
       lineCounter.getStats().totalNumberOfFiles.should.equal(1);
       lineCounter.getStats().totalNumberOfLines.should.equal(3);
@@ -69,15 +80,15 @@ describe('lineCountSync', function() {
     });
 
     it('should find stats for random file types', function() {
-      var directoryReader = {"readDirectoryContents" : function() {return ["foo.h", "bar.java", "doh.h", "boom.txt", "blue.h"]; }},
-        fileReader = {"statSync" : function() {
-          return {"isDirectory" : function() {return false; }};
-        },
-          "readFileSync" : function() {return fileContents; }},
-        fileTypes = new FileTypeBuilder().withTypes([".js", ".h", ".txt"]).build(),
-        lineCounter = new LineCountSync(directoryReader, fileReader, fileTypes);
+      var fileTypes = new FileTypeBuilder().withTypes([".js", ".h", ".txt"]).build(),
+        lineCounter = new LineCountSync(stubDirectoryReader, stubFileReader, fileTypes);
+      stubReadDirectoryContents.withArgs("my fake directory").returns(["foo.h", "bar.java", "doh.h", "boom.txt", "blue.h"]);
+      stubStatSync.returns({isDirectory : function() {return false; }});
+      stubReadFileSync.returns(fileContentsWith3Lines);
+
 
       lineCounter.readDirectoryContents('my fake directory');
+
 
       lineCounter.getStats().totalNumberOfFiles.should.equal(4);
       lineCounter.getStats().totalNumberOfLines.should.equal(12);
@@ -90,18 +101,14 @@ describe('lineCountSync', function() {
 
   describe('dynamicTypes', function() {
     it('should find types dynamically', function() {
-      var readDirectoryContents = sinon.stub(),
-        statSync = sinon.stub(),
-        readFileSync = sinon.stub(),
-        directoryReader = {"readDirectoryContents" : readDirectoryContents},
-        fileReader = {"statSync" : statSync, "readFileSync" : readFileSync},
-        lineCounter = new LineCountSync(directoryReader, fileReader, [], true);
+      var lineCounter = new LineCountSync(stubDirectoryReader, stubFileReader, [], true);
+      stubReadDirectoryContents.withArgs(".").returns(["file1.js", "file2.ps1", "file3.js", "file4.bat", "file5.bat", "file6.js"]);
+      stubStatSync.returns({isDirectory : function() {return false; }});
+      stubReadFileSync.returns(fileContentsWith2Lines);
 
-      readDirectoryContents.withArgs(".").returns(["file1.js", "file2.ps1", "file3.js", "file4.bat", "file5.bat", "file6.js"]);
-      statSync.returns({isDirectory : function() {return false; }});
-      readFileSync.returns("aaa\nbbb");
 
       lineCounter.readDirectoryContents('.');
+
 
       lineCounter.getStats().totalNumberOfFiles.should.equal(6);
       lineCounter.getStats().totalNumberOfLines.should.equal(12);
@@ -114,27 +121,24 @@ describe('lineCountSync', function() {
   });
 
   it('should recursively query down the directory tree', function() {
-    var readDirectoryContents = sinon.stub(),
-      statSync = sinon.stub(),
-      readFileSync = sinon.stub(),
-      directoryReader = {"readDirectoryContents" : readDirectoryContents},
-      fileReader = {"statSync" : statSync, "readFileSync" : readFileSync},
-      lineCounter = new LineCountSync(directoryReader, fileReader, defaultFileTypes);
+    var lineCounter = new LineCountSync(stubDirectoryReader, stubFileReader, defaultFileTypes);
 
-    readDirectoryContents.withArgs(".").returns(["file1.js", "dir1", "file2.js"]);
-    readDirectoryContents.withArgs("dir1").returns(["file3.js", "dir2"]);
-    readDirectoryContents.withArgs(path.join("dir1", "dir2")).returns(["file4.css", "file5.js"]);
-    statSync.withArgs("dir1").returns({isDirectory : function() {return true; }});
-    statSync.withArgs(path.join("dir1", "dir2")).returns({isDirectory : function() {return true; }});
-    statSync.withArgs("file1.js").returns({isDirectory : function() {return false; }});
-    statSync.withArgs("file2.js").returns({isDirectory : function() {return false; }});
-    statSync.withArgs(path.join("dir1", "file3.js")).returns({isDirectory : function() {return false; }});
-    statSync.withArgs(path.join("dir1", "dir2", "file4.css")).returns({isDirectory : function() {return false; }});
-    statSync.withArgs(path.join("dir1", "dir2", "file5.js")).returns({isDirectory : function() {return false; }});
-//    statSync.returns({isDirectory : function() {return false; }});
-    readFileSync.returns("");
+    stubReadDirectoryContents.withArgs(".").returns(["file1.js", "dir1", "file2.js"]);
+    stubReadDirectoryContents.withArgs("dir1").returns(["file3.js", "dir2"]);
+    stubReadDirectoryContents.withArgs(path.join("dir1", "dir2")).returns(["file4.css", "file5.js"]);
+    stubStatSync.withArgs("dir1").returns({isDirectory : function() {return true; }});
+    stubStatSync.withArgs(path.join("dir1", "dir2")).returns({isDirectory : function() {return true; }});
+    stubStatSync.withArgs("file1.js").returns({isDirectory : function() {return false; }});
+    stubStatSync.withArgs("file2.js").returns({isDirectory : function() {return false; }});
+    stubStatSync.withArgs(path.join("dir1", "file3.js")).returns({isDirectory : function() {return false; }});
+    stubStatSync.withArgs(path.join("dir1", "dir2", "file4.css")).returns({isDirectory : function() {return false; }});
+    stubStatSync.withArgs(path.join("dir1", "dir2", "file5.js")).returns({isDirectory : function() {return false; }});
+//  stubStatSync.returns({isDirectory : function() {return false; }});
+    stubReadFileSync.returns(emptyFileContents);
+
 
     lineCounter.readDirectoryContents('.');
+
 
     lineCounter.getStats().totalNumberOfFiles.should.equal(5);
     lineCounter.getStats().totalNumberOfLines.should.equal(0);

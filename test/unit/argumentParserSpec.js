@@ -88,7 +88,7 @@ describe('argumentParser', function() {
       parsedArguments.should.have.property("dynamicTypes", true);
     });
 
-    it('should not use the arguments passed in', function() {
+    it('when set should not use the fileTypes passed in', function() {
       var parsedArguments;
 
       parsedArguments = parser.parse(["node", "main.js", ".foo", "-dynamicTypes:true", ".bar"]);
