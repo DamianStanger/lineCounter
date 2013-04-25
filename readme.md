@@ -44,7 +44,8 @@ would return:
 ```
 
 ## Tests
-The tests were written to be run with mocha, simply ensure mocha is installed globally and type 'mocha --recursive' whilst in the root dir
+The tests were written to be run with mocha, simply ensure mocha is installed globally and type 'mocha --recursive' whilst in the root dir.
+I find that using mocha --recursive --reporter Spec -w to be a good set up that will give a nice report and watch the file system for changes
 
 ## NOTES
 Certain directories are ignored by default and there is currently no way to turn this off or change them at run time. These are:
