@@ -39,8 +39,6 @@ would return:
 ```
 15 431
 .js 11 377
-.css 0 0
-.java 0 0
 .gitignore 1 2
 .log 1 23
 .md 1 29
