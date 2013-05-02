@@ -17,8 +17,8 @@ Would return:
 ```
 
 Which would represent the following information:
-- 17 files found, with 2668 non empty lines in total
-- 15 javascript files with a combined count of 2663 none empty lines
+- 13 files found, with 403 non empty lines in total
+- 11 javascript files with a combined count of 377 none empty lines
 - 1 txt and md file
 
 ## Example 2
