@@ -22,14 +22,18 @@ Which would represent the following information:
 - 1 txt and md file
 
 ## Example 2
-    node main.js -d:c:\code\project .java .js .cs
-    node main.js -d:..\project .java .js .cs
+```
+node main.js -d:c:\code\project .java .js .cs
+node main.js -d:..\project .java .js .cs
+```
 
 This would allow you to run the stats in any folder on the filesystem either with a relative path or an absolute path
 
 ## Example 3
 Find stats for all the fileTypes in the current directory
-    node main.js -dynamicTypes:true
+```
+node main.js -dynamicTypes:true
+```
 
 would return:
 ```
